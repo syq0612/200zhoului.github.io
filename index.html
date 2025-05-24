@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>200元周六消费记录</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+
+        /* 进度条 */
+        .progress {
+            height: 25px;
+            background: #eee;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        #progress-bar {
+            height: 100%;
+            background: #00c853;
+            width: 100%;
+            transition: width 1s ease;
+        }
+
+        /* 消费项卡片 */
+        .item {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s forwards;
+            margin: 1.5rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .item-info {
+            padding: 1rem;
+            background: #f8f9fa;
+        }
+
+        /* 按钮样式 */
+        #start-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+
+            #start-btn:hover {
+                background: #1976D2;
+                transform: scale(1.05);
+            }
+    </style>
+</head>
+<body>
+    <button id="start-btn">点击查看消费过程 📸</button>
+
+    <div class="container">
+        <h1 style="color: #2e7d32;">200元周六计划</h1>
+
+        <div class="progress">
+            <div id="progress-bar"></div>
+        </div>
+
+        <div style="font-size: 1.2rem; margin: 1rem 0;">
+            剩余金额：<span id="remaining">200</span> 元
+        </div>
+
+        <div id="items-container"></div>
+    </div>
+
+    <script>
+        // 消费数据（替换为你的图片链接）
+        const expenses = [
+            {
+                name: "地铁出行",
+                cost: 6,
+                image: "2.jpg", // 替换为实际图片URL
+                delay: 500
+            },
+            {
+                name: "园林门票",
+                cost: 100,
+                image: "1.jpg",
+                delay: 2000
+            },
+            {
+                name: "午饭: 哑巴生煎 + 朱鸿兴面馆 + 潘玉麟糖粥",
+                cost: 86,
+                image: "3.jpg",
+                delay: 3000
+            }
+        ];
+
+        // 元素引用
+        const startBtn = document.getElementById('start-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const remaining = document.getElementById('remaining');
+        const itemsContainer = document.getElementById('items-container');
+
+        // 启动动画
+        startBtn.addEventListener('click', () => {
+            startBtn.disabled = true;
+            itemsContainer.innerHTML = '';
+            remaining.textContent = '200';
+            progressBar.style.width = '100%';
+
+            let currentBudget = 200;
+
+            expenses.forEach((item, index) => {
+                setTimeout(() => {
+                    // 创建带图片的消费项
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'item';
+                    itemDiv.innerHTML = `
+                            <img class="item-image" src="${item.image}">
+                            <div class="item-info">
+                                <div style="font-size: 1.1rem;">${item.name}</div>
+                                <div style="color: #d32f2f; font-weight: bold; margin-top: 0.5rem;">
+                                    -${item.cost}元
+                                </div>
+                            </div>
+                        `;
+                    itemsContainer.appendChild(itemDiv);
+
+                    // 更新金额和进度条
+                    currentBudget -= item.cost;
+                    remaining.textContent = currentBudget;
+                    progressBar.style.width = `${(currentBudget / 200) * 100}%`;
+
+                    // 最后一个项目完成后恢复按钮
+                    if (index === expenses.length - 1) {
+                        setTimeout(() => {
+                            startBtn.disabled = false;
+                        }, 1000);
+                    }
+                }, item.delay * (index + 1));
+            });
+        });
+    </script>
+</body>
+</html>
